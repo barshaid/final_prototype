@@ -7,29 +7,26 @@ using System.Collections.Generic;
 public class Player : MonoBehaviour {
     public float WalkSpeed;
     public float JumpForce;
-    public AnimationClip _walk, _jump;
-    public Animation _Legs;
-    public Transform _Blade, _GroundCast;
+    public Transform Blade, GroundCast;
     public Camera cam;
-    public bool mirror;
 
+    private bool mirror;
 
-    private bool _canJump, _canWalk;
-    private bool _isWalk, _isJump;
-    private float rot, _startScale;
+    private bool canJump, canWalk;
+    private bool isWalk, isJump;
+    private float startScale;
     private Rigidbody2D rig;
-    private Vector2 _inputAxis;
-    private RaycastHit2D _hit;
+    private Vector2 inputAxis;
+    private RaycastHit2D hit;
 
     public Collider2D g1;
-    public int health=5;
-    Vector2 knockback = new Vector2(-100.0f, 5.0f);
+    public int health = 5;
+
     void Start ()
     {
         rig = gameObject.GetComponent<Rigidbody2D>();
-        _startScale = transform.localScale.x;
-        Physics2D.IgnoreCollision(GetComponent<Collider2D>(), g1);
-        
+        startScale = transform.localScale.x;
+        Physics2D.IgnoreCollision(GetComponent<Collider2D>(), g1);   
     }
 
     void Update()
@@ -37,6 +34,11 @@ public class Player : MonoBehaviour {
         
         Vector3 myScale = transform.localScale;
         bool rotate = false;
+
+        if (health == 0)
+        {
+            Destroy(gameObject);
+        }
 
         if (cam.ScreenToWorldPoint(Input.mousePosition).x > transform.position.x + 0.2f)
             mirror = false;
@@ -63,58 +65,42 @@ public class Player : MonoBehaviour {
             GetComponent<Animation>().Play();
         }
 
-        if (_hit = Physics2D.Linecast(new Vector2(_GroundCast.position.x, _GroundCast.position.y + 0.2f), _GroundCast.position))
+        if (hit = Physics2D.Linecast(new Vector2(GroundCast.position.x, GroundCast.position.y + 0.2f), GroundCast.position))
         {
-            if (!_hit.transform.CompareTag("Player"))
+            if (!hit.transform.CompareTag("Player"))
             {
-                _canJump = true;
-                _canWalk = true;
+                canJump = true;
+                canWalk = true;
             }
         }
-        else _canJump = false;
+        else canJump = false;
 
-        _inputAxis = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        if (_inputAxis.y > 0 && _canJump)
+        inputAxis = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        if (inputAxis.y > 0 && canJump)
         {
-            _canWalk = false;
-            _isJump = true;
+            canWalk = false;
+            isJump = true;
         }
     }
 
     void FixedUpdate()
     {
-        
-
         if (cam.ScreenToWorldPoint(Input.mousePosition).x > transform.position.x + 0.2f)
             mirror = false;
         if (cam.ScreenToWorldPoint(Input.mousePosition).x < transform.position.x - 0.2f)
             mirror = true;
 
-      
-
-        if (_inputAxis.x != 0)
-        {
-            rig.velocity = new Vector2(_inputAxis.x * WalkSpeed * Time.deltaTime, rig.velocity.y);
-
-            if (_canWalk)
-            {
-                _Legs.clip = _walk;
-                _Legs.Play();
-            }
-        }
-
+    
+        if (inputAxis.x != 0)
+            rig.velocity = new Vector2(inputAxis.x * WalkSpeed * Time.deltaTime, rig.velocity.y);
         else
-        {
-            rig.velocity = new Vector2(0, rig.velocity.y);
-        }
-
-        if (_isJump)
+             rig.velocity = new Vector2(0, rig.velocity.y);
+        
+        if (isJump)
         {
             rig.AddForce(new Vector2(0, JumpForce));
-            _Legs.clip = _jump;
-            _Legs.Play();
-            _canJump = false;
-            _isJump = false;
+            canJump = false;
+            isJump = false;
         }
     }
 
@@ -127,10 +113,15 @@ public class Player : MonoBehaviour {
     {
         if (col.transform.tag == "enemy")
         {
+            Vector2 knockback = new Vector2(-10, 7.0f);
+
             health--;
-            GetComponent<Rigidbody2D>().AddForce(knockback, ForceMode2D.Impulse);
+            rig.AddForce(knockback, ForceMode2D.Impulse);
+            
+
         }
     }
 
 
 }
+

@@ -10,15 +10,9 @@ public class BackGround
     public float _damping = 0.5f;
 }
 
-public class Paralax : MonoBehaviour {
-    public enum Mode
-    {
-        Horizontal,
-        Vertical,
-        HorizontalAndVertical
-    }
- 
-    public Mode parallaxMode;
+public class Paralax : MonoBehaviour
+{
+
     public List<BackGround> _backGrounds;
 
     private float[] scales;
@@ -49,23 +43,8 @@ public class Paralax : MonoBehaviour {
             if (_backGrounds[i] != null)
             {
                 Vector3 parallax = (previousCamPos - cam.position) * scales[i];
-
-                switch (parallaxMode)
-                {
-                    case Mode.Horizontal:
-                        position = new Vector3(_backGrounds[i]._backGround.position.x + parallax.x, 
-                            _backGrounds[i]._backGround.position.y, _backGrounds[i]._backGround.position.z);
-                        break;
-                    case Mode.Vertical:
-                        position = new Vector3(_backGrounds[i]._backGround.position.x, 
-                            _backGrounds[i]._backGround.position.y + parallax.y, _backGrounds[i]._backGround.position.z);
-                        break;
-                    case Mode.HorizontalAndVertical:
-                        position = new Vector3(_backGrounds[i]._backGround.position.x + parallax.x, 
-                            _backGrounds[i]._backGround.position.y + parallax.y, _backGrounds[i]._backGround.position.z);
-                        break;
-                }
-
+                position = new Vector3(_backGrounds[i]._backGround.position.x + parallax.x,
+                    _backGrounds[i]._backGround.position.y, _backGrounds[i]._backGround.position.z);
                 _backGrounds[i]._backGround.position = Vector3.Lerp(_backGrounds[i]._backGround.position, position, _backGrounds[i]._damping * Time.deltaTime);
             }
         }

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class enemy : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
     public float speed = 1.0f;
     public int health = 1;
-    Vector2 knockback = new Vector2(5.0f,5.0f);
+    Vector2 knockback = new Vector2(50.0f,50.0f);
     bool direction;
     public Collider2D g1,g2;
     void Start()
