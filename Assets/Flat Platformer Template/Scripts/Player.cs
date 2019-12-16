@@ -21,11 +21,16 @@ public class Player : MonoBehaviour {
     private Vector2 _inputAxis;
     private RaycastHit2D _hit;
 
-	void Start ()
+    public Collider2D g1;
+    public int health=5;
+    Vector2 knockback = new Vector2(-100.0f, 5.0f);
+    void Start ()
     {
         rig = gameObject.GetComponent<Rigidbody2D>();
         _startScale = transform.localScale.x;
-	}
+        Physics2D.IgnoreCollision(GetComponent<Collider2D>(), g1);
+        
+    }
 
     void Update()
     {
@@ -53,7 +58,7 @@ public class Player : MonoBehaviour {
             transform.localScale = myScale;
         }
 
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.LeftControl))
         {
             GetComponent<Animation>().Play();
         }
@@ -118,8 +123,14 @@ public class Player : MonoBehaviour {
         return mirror;
     }
 
-    void OnDrawGizmos()
+    private void OnCollisionEnter2D(Collision2D col)
     {
-        Gizmos.DrawLine(transform.position, _GroundCast.position);
+        if (col.transform.tag == "enemy")
+        {
+            health--;
+            GetComponent<Rigidbody2D>().AddForce(knockback, ForceMode2D.Impulse);
+        }
     }
+
+
 }
